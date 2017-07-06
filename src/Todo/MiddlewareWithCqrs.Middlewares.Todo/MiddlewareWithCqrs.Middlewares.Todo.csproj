@@ -8,4 +8,9 @@
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MiddlewareWithCqrs.Domain.Todo.Contracts\MiddlewareWithCqrs.Domain.Todo.Contracts.csproj" />
+    <ProjectReference Include="..\MiddlewareWithCqrs.Domain.Todo\MiddlewareWithCqrs.Domain.Todo.csproj" />
+  </ItemGroup>
+
 </Project>

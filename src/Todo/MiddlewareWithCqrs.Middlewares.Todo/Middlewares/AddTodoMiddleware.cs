@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Options;
+using MiddlewareWithCqrs.Domain.Todo.CommandHandlers;
+using MiddlewareWithCqrs.Domain.Todo.Contracts.Commands;
 using System.Threading.Tasks;
 
 namespace MiddlewareWithCqrs.Middlewares.Todo.Middlewares
@@ -19,6 +21,7 @@ namespace MiddlewareWithCqrs.Middlewares.Todo.Middlewares
 
         public async Task Invoke(HttpContext context)
         {
+            var result = new AddTodoCommandHandler().Handle(new AddTodoCommand());
             await _next.Invoke(context);
         }
     }
@@ -27,13 +30,12 @@ namespace MiddlewareWithCqrs.Middlewares.Todo.Middlewares
     {
         public static IApplicationBuilder UseAddTodoMiddleware(this IApplicationBuilder app, AddTodoMiddlewareOptions options)
         {
-            var url = $"api/mypath/{{id}}";
+            return app.UseMiddleware<AddTodoMiddleware>(new OptionsWrapper<AddTodoMiddlewareOptions>(options));
+        }
 
-            var routeBuilder = new RouteBuilder(app);
-
-            app.UseMiddleware<AddTodoMiddleware>(new OptionsWrapper<AddTodoMiddlewareOptions>(options));
-
-            return app;
+        public static IApplicationBuilder UseAddTodoRoutes(this IApplicationBuilder app, AddTodoMiddlewareOptions options, string url)
+        {
+            return app.UseRouter(new RouteBuilder(app).MapPost(url, context => new AddTodoCommandHandler().Handle(new AddTodoCommand())).Build());
         }
     }
 
